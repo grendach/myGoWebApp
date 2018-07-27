@@ -8,7 +8,9 @@
 
 <body>
 <ul>
-    <li>{{.Model}} - {{.Producent}}</li>
+{{range .}}
+    <li>{{.Model}} - {{.Type}}</li>
+    {{end}}
 </ul>
    
 </body>

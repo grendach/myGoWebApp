@@ -8,9 +8,9 @@ import (
 
 var tmp *template.Template
 
-type car struct {
-	Model     string
-	Producent string
+type transport struct {
+	Model string
+	Type  string
 }
 
 func init() {
@@ -18,12 +18,23 @@ func init() {
 }
 
 func main() {
-	myCar := car{
-		Model:     "Fabia",
-		Producent: "Scoda",
+	myCar := transport{
+		Model: "Fabia",
+		Type:  "car",
+	}
+	myMoto := transport{
+		Model: "BMW",
+		Type:  "motobyke",
 	}
 
-	err := tmp.Execute(os.Stdout, myCar)
+	myBicycle := transport{
+		Model: "B-Twin",
+		Type:  "bicycle",
+	}
+
+	tr := []transport{myBicycle, myCar, myMoto}
+
+	err := tmp.Execute(os.Stdout, tr)
 	if err != nil {
 		log.Fatalln(err)
 	}
