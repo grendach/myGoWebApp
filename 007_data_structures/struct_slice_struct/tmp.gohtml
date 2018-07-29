@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plants & Transport</title>
+</head>
+<body>
+
+<ul>
+    {{range .Plant}}
+    <li>{{.Type}} - {{.Color}}</li>
+    {{end}}
+</ul>
+
+<ul>
+    {{range .Transport}}
+    <li>{{.Model}} - {{.Type}}</li>
+    {{end}}
+</ul>
+
+</body>
+</html>
