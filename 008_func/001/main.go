@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"strings"
 	"text/template"
 )
 
@@ -21,9 +21,23 @@ type city struct {
 	Population int
 }
 
-func init() {
-	tmp = template.Must(template.ParseFiles("tmp.gohtml"))
+var fm = template.FuncMap{
+	"uc": strings.ToUpper,
+	"ft": firstThree,
 }
+
+func init() {
+	tmp = template.Must(template.New("").Funcs(fm).ParseFiles("tmp.gohtml"))
+}
+
+func firstThree(s string) string {
+	s = strings.TrimSpace(s)
+	if len(s) > 3 {
+		s = s[:3]
+	}
+	return s
+}
+
 func main() {
 	c1 := car{
 		Model: "VAZ",
@@ -66,10 +80,9 @@ func main() {
 		cars,
 	}
 
-	err := tmp.Execute(os.Stdout, data)
+	err := tmp.ExecuteTemplate(os.Stdout, "tmp.gohtml", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(cities)
 
 }

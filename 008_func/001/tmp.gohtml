@@ -6,12 +6,13 @@
     <title>Transport</title>
 </head>
 <body>
-
-<ul>
     {{range .Place}}
-    <li>{{.Location}} - {{.Population}}</li>
+    {{ft .Location}}
     {{end}}
-</ul>
+
+    {{range .Transport}}
+    {{uc .Model}}
+    {{end}}
 
 </body>
 </html>
