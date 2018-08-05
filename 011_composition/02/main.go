@@ -13,14 +13,22 @@ type person struct {
 	Age  int
 }
 
+type JamesBond struct {
+	person
+	LicenseToKill bool
+}
+
 func init() {
 	tmp = template.Must(template.ParseFiles("tmp.gohtml"))
 }
 
 func main() {
-	p1 := person{
-		Name: "Dmytro Grendach",
-		Age:  33,
+	p1 := JamesBond{
+		person{
+			Name: "Ilon Musk",
+			Age:  46,
+		},
+		true,
 	}
 
 	err := tmp.Execute(os.Stdout, p1)
