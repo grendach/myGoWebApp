@@ -7,9 +7,10 @@ import (
 )
 
 type course struct {
-	Number string
-	Name   string
-	Units  string
+	Number, Name, Units string
+	// different type of struct writing
+	// Name   string
+	// Units  string
 }
 
 type semester struct {
@@ -18,10 +19,11 @@ type semester struct {
 }
 
 type year struct {
-	AcaYear string
-	Fall    semester
-	Spring  semester
-	Summer  semester
+	AcaYear              string
+	Fall, Spring, Summer semester
+	// different type of struct writing
+	// Spring  semester
+	// Summer  semester
 }
 
 var tmp *template.Template
