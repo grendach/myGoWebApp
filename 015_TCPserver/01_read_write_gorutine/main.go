@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
+	"strings"
 )
 
 func main() {
@@ -27,19 +27,52 @@ func main() {
 }
 
 func handle(conn net.Conn) {
-	err := conn.SetDeadline(time.Now().Add(10 * time.Second))
-	if err != nil {
-		log.Fatalln("Connection timeout")
+	defer conn.Close()
 
-	}
+	//read request
+	request(conn)
+
+	//write response
+	response(conn)
+}
+
+func request(conn net.Conn) {
+	i := 0
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		ln := scanner.Text()
 		fmt.Println(ln)
-		fmt.Fprintf(conn, "I can hear you: %s\n", ln)
-
+		if i == 0 {
+			//request line
+			m := strings.Fields(ln)[0] //read methon
+			u := strings.Fields(ln)[1] //read url
+			fmt.Println("***METHOD", m)
+			fmt.Println("***URL", u)
+		}
+		if ln == "" {
+			// headers fully read
+			break
+		}
+		i++
 	}
-	defer conn.Close()
-	// Below code never will be executed
-	fmt.Println("!!! Code got here!!!")
+
+}
+
+func response(conn net.Conn) {
+	body := `<!DOCTYPE html>
+			<html lang="en">
+				<head>
+					<meta charet="UTF-8">
+					<title>GoLearning</title>
+				</head>
+				<body>
+					<strong>Hello Dmytro</strong>
+				</body>
+			</html>`
+						
+	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
+	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
+	fmt.Fprint(conn, "Content-Type: text/html\r\n")
+	fmt.Fprint(conn, "\r\n")
+	fmt.Fprint(conn, body)
 }
