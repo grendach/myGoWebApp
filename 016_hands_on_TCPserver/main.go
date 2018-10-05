@@ -18,7 +18,7 @@ func main() {
 	for {
 		conn, err := li.Accept()
 		if err != nil {
-			log.Fatalln(err.Error())
+			log.Println(err.Error())
 			continue
 		}
 		go handle(conn)
@@ -27,12 +27,7 @@ func main() {
 
 func handle(conn net.Conn) {
 	defer conn.Close()
-
-	// read request
 	request(conn)
-
-	// write response
-	respond(conn)
 }
 
 func request(conn net.Conn) {
@@ -42,11 +37,7 @@ func request(conn net.Conn) {
 		ln := scanner.Text()
 		fmt.Println(ln)
 		if i == 0 {
-			// request line
-			m := strings.Fields(ln)[0]
-			fmt.Println("***METHOD:", m)
-			u := strings.Fields(ln)[1]
-			fmt.Println("***URI:", u)
+			mux(conn, ln)
 		}
 		if ln == "" {
 			// headers are done
@@ -56,9 +47,108 @@ func request(conn net.Conn) {
 	}
 }
 
-func respond(conn net.Conn) {
+func mux(conn net.Conn, ln string) {
+	// request line
+	m := strings.Fields(ln)[0] // method
+	u := strings.Fields(ln)[1] // uri
+	fmt.Println("***METHOD", m)
+	fmt.Println("***URI", u)
 
-	body := `<!DOCTYPE html><html lang="en"><head><meta charet="UTF-8"><title></title></head><body><strong>Hello Dmytro Grendach</strong></body></html>`
+	// multiplexer
+	if m == "GET" && u == "/" {
+		index(conn)
+	}
+	if m == "GET" && u == "/about" {
+		about(conn)
+	}
+	if m == "GET" && u == "/contact" {
+		contact(conn)
+	}
+	if m == "GET" && u == "/apply" {
+		apply(conn)
+	}
+	if m == "POST" && u == "/apply" {
+		applyProcess(conn)
+	}
+}
+
+func index(conn net.Conn) {
+	body := `<!DOCTYPE html><html lang="en"><head><meta charet="UTF-8"><title></title></head><body>
+	<strong>INDEX</strong><br>
+	<a href="/">index</a><br>
+	<a href="/about">about</a><br>
+	<a href="/contact">contact</a><br>
+	<a href="/apply">apply</a><br>
+	</body></html>`
+	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
+	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
+	fmt.Fprint(conn, "Content-Type: text/html\r\n")
+	fmt.Fprint(conn, "\r\n")
+	fmt.Fprint(conn, body)
+}
+
+func about(conn net.Conn) {
+	body := `<!DOCTYPE html><html lang="en"><head><meta charet="UTF-8"><title></title></head><body>
+	<strong>ABOUT</strong><br>
+	<a href="/">index</a><br>
+	<a href="/about">about</a><br>
+	<a href="/contact">contact</a><br>
+	<a href="/apply">apply</a><br>
+	</body></html>`
+
+	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
+	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
+	fmt.Fprint(conn, "Content-Type: text/html\r\n")
+	fmt.Fprint(conn, "\r\n")
+	fmt.Fprint(conn, body)
+}
+
+func contact(conn net.Conn) {
+
+	body := `<!DOCTYPE html><html lang="en"><head><meta charet="UTF-8"><title></title></head><body>
+	<strong>CONTACT</strong><br>
+	<a href="/">index</a><br>
+	<a href="/about">about</a><br>
+	<a href="/contact">contact</a><br>
+	<a href="/apply">apply</a><br>
+	</body></html>`
+
+	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
+	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
+	fmt.Fprint(conn, "Content-Type: text/html\r\n")
+	fmt.Fprint(conn, "\r\n")
+	fmt.Fprint(conn, body)
+}
+
+func apply(conn net.Conn) {
+
+	body := `<!DOCTYPE html><html lang="en"><head><meta charet="UTF-8"><title></title></head><body>
+	<strong>APPLY</strong><br>
+	<a href="/">index</a><br>
+	<a href="/about">about</a><br>
+	<a href="/contact">contact</a><br>
+	<a href="/apply">apply</a><br>
+	<form method="POST" action="/apply">
+	<input type="submit" value="apply">
+	</form>
+	</body></html>`
+
+	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
+	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
+	fmt.Fprint(conn, "Content-Type: text/html\r\n")
+	fmt.Fprint(conn, "\r\n")
+	fmt.Fprint(conn, body)
+}
+
+func applyProcess(conn net.Conn) {
+
+	body := `<!DOCTYPE html><html lang="en"><head><meta charet="UTF-8"><title></title></head><body>
+	<strong>APPLY PROCESS</strong><br>
+	<a href="/">index</a><br>
+	<a href="/about">about</a><br>
+	<a href="/contact">contact</a><br>
+	<a href="/apply">apply</a><br>
+	</body></html>`
 
 	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
 	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
